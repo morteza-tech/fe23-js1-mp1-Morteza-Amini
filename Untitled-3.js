@@ -1,46 +1,49 @@
-const Rad = ['Rad 1', 'Rad 2', 'Rad 3', 'Rad 4', 'Rad 5', 'Rad 6'];
+const container = document.createElement("div");
+container.id = "container";
+container.style.cssText = "display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; place-items: center; text-align: center; margin: 20px auto;";
 
-// Skapa en container för raderna
-const container = document.createElement('div');
-document.body.appendChild(container);
 
-// Skapar h2-element för varje rad och sätter dess egenskaper
-for (let i = 0; i < Rad.length; i++) {
-  const h2El = document.createElement('h2');
-  container.appendChild(h2El);
+const colorCombinations = [
+    { background: 'white', text: 'black' },
+    { background: 'black', text: 'white' }
+];
 
-  h2El.innerText = Rad[i];
 
-  // Sätt unik färg och border för varje rad
-  h2El.style.margin = '5px';
-  h2El.style.padding = '10px';
-  h2El.style.borderRadius = '5px';
-  
-  // Centrera texten vertikalt och horisontellt
-  h2El.style.display = 'flex';
-  h2El.style.alignItems = 'center';
-  h2El.style.justifyContent = 'center';
+const createAndAppendText = (heading, text, columnIndex, background, textColor) => {
+    const paragraph = document.createElement("p");
+    const headingNode = document.createElement("strong");
+    headingNode.textContent = heading;
 
-  // Justera storleken baserat på 
-  const fontSize = `${10 + i * 15}px`;
-  h2El.style.fontSize = fontSize;
+    const lines = text.split(", ").map(line => document.createTextNode(line.trim()));
+    paragraph.append(headingNode, ...lines.map(line => [document.createElement("br"), line]).flat());
 
-  // Sätt textfärgen till blå
-  h2El.style.color = 'blue';
+    paragraph.className = "text-container";
+    paragraph.style.cssText = `
+        border: 2px solid black;
+        padding: 10px;
+        margin: 0;
+        grid-column: ${columnIndex};
+        background-color: ${background};
+        color: ${textColor};
+    `;
 
-  // Sätt bakgrundsfärgen 
-  switch (i) {
-    case 0:
-      h2El.style.backgroundColor = 'lightgreen';
-      break;
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-    case 5:
-      h2El.style.backgroundColor = 'lightblue'; 
-      break;
-    default:
-      h2El.style.backgroundColor = 'lightblue';
-  }
+    container.appendChild(paragraph);
 }
+for (let index = 0; index < 3; index++) {
+    const heading = `Rad ${index + 1}:`;
+    
+    
+    const text = (index === 0)
+        ? Array.from({ length: 9 }, (_, i) => i + 1).join(", ")
+        : (index === 1)
+            ? Array.from({ length: 9 }, (_, i) => 9 - i).join(", ")
+            : ["ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta", "nio"].join(", ");
+
+    
+    const { background, text: textColor } = colorCombinations[index % colorCombinations.length];
+
+    
+    createAndAppendText(heading, text, (index + 1).toString(), background, textColor);
+}
+
+document.body.appendChild(container);
